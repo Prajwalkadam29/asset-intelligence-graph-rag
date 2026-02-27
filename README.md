@@ -335,7 +335,7 @@ Key features:
 
 ---
 
-# *Why this project is one-of-a-kind for Smart Manufacturing:*
+# Why this project is one-of-a-kind for Smart Manufacturing:
 
 ## **1. Combines PLM data + RAG + Graph Intelligence**
 
@@ -406,3 +406,14 @@ This makes it infinitely scalable across:
 * automotive component trees
 
 ---
+
+## **6. AR "Explode View" Functionality**
+
+This project also provides an AR extension to view the "explode view" of a machine, select the exact component, and review dependencies.
+
+This extends its use-case into:
+
+* internal dependency mapping
+* predictive maintenance
+* component vendor mapping
+* intelligent product view

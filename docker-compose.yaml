@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   neo4j:
     image: neo4j:5
@@ -18,3 +17,27 @@ services:
       - ./neo4j/logs:/logs
       - ./neo4j/import:/import
       - ./neo4j/plugins:/plugins
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: graph-rag-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"   # FastAPI Web Server
+    env_file:
+      - .env
+    depends_on:
+      - neo4j
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: graph-rag-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"     # Serving React via Nginx on port 5173
+    depends_on:
+      - backend

@@ -417,3 +417,174 @@ This extends its use-case into:
 * predictive maintenance
 * component vendor mapping
 * intelligent product view
+
+---
+
+# 🚀 **Quick Start & Execution Guide**
+
+Follow these step-by-step instructions to get the full digital thread application running locally on your system.
+
+## **Prerequisites**
+Before you begin, ensure you have the following installed:
+* **Python 3.10+**: For backend APIs and ingestion.
+* **Node.js (v18+) & npm**: For the Vite/React frontend dashboard.
+* **Docker Desktop**: To spin up the Neo4j Graph Database.
+* **Groq API Key**: Optional, but highly recommended for Graph-RAG synthesis and speech-to-text features.
+
+---
+
+## **Step 1: Clone and Set Up Environment**
+1. Clone your repository and navigate to the project directory:
+   ```bash
+   cd asset-intelligence-graph-rag
+   ```
+2. Create your environment configuration file by copying the template or editing `.env` directly in your root directory:
+   ```ini
+   # Neo4j Settings
+   NEO4J_URI=bolt://localhost:7687
+   NEO4J_USER=neo4j
+   NEO4J_PASSWORD=adwyteneo
+
+   # Embedding Configuration (Uses 384-D gte-small by default)
+   EMBEDDING_MODEL=thenlper/gte-small
+   EMBEDDING_DIM=384
+
+   # Groq LLM Settings (Required for Chat synthesis & Speech-To-Text)
+   GROQ_API_KEY=your_groq_api_key_here
+   GROQ_CHAT_MODEL=llama-3.3-70b-versatile
+   ```
+   *(Note: The system has been upgraded to utilize the active `llama-3.3-70b-versatile` model instead of the decommissioned 3.1 model).*
+
+---
+
+## **Step 2: Spin Up the Neo4j Database**
+We use Docker to run Neo4j with built-in APOC (Awesome Procedures on Cypher) plugins:
+1. Start the container in detached mode:
+   ```bash
+   docker-compose up -d
+   ```
+2. Open your browser and navigate to the **Neo4j Browser Dashboard** at [http://localhost:7474](http://localhost:7474).
+3. Connect using:
+   * **Bolt URL**: `bolt://localhost:7687`
+   * **Username**: `neo4j`
+   * **Password**: `adwyteneo`
+
+---
+
+## **Step 3: Setup database constraints and indexes**
+1. Copy the Cypher queries from the pre-configured [schema.cypher](cypher/schema.cypher) file.
+2. Run them inside your Neo4j browser workspace command line to create the necessary unique constraints, indexes, and full-text vector spaces.
+   
+   > [!NOTE]
+   > The schema is pre-optimized to use `IS UNIQUE` instead of the enterprise-only `IS NODE KEY` constraint, making it 100% compatible with both **Neo4j Community Edition** and Enterprise Edition out-of-the-box!
+
+---
+
+## **Step 4: Set Up and Ingest the Python Backend**
+1. In the root directory, initialize and activate your Python virtual environment:
+   ```powershell
+   # Windows PowerShell
+   python -m venv .venv
+   .venv\Scripts\Activate.ps1
+   ```
+2. Install all required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the ingestion scripts to load the sample products, component specifications, and embeddings into the Neo4j database:
+   ```bash
+   # A. Ingest Meta Quest 3 BOM
+   python scripts/ingest.py --file examples/parts.yaml
+
+   # B. Ingest 3D-Lathe BOM
+   python scripts/ingest.py --file examples/3d-lathe.yaml
+
+   # C. Ingest Industrial Lathe Machine BOM
+   python scripts/ingest.py --file examples/modulathe.yaml
+   ```
+4. Precompute the component compatibility scores for each product:
+   ```bash
+   python scripts/compat.py --product "Meta Quest 3"
+   python scripts/compat.py --product "3D-Lathe"
+   python scripts/compat.py --product "Industrial Lathe Machine"
+   ```
+5. *(Optional)* Ingest additional documentation and generate version mappings for the Modulathe product:
+   ```bash
+   python examples/modulathe/ingest_modulathe_docs.py
+   python examples/modulathe/compat_modulathe.py
+   ```
+
+---
+
+## **Step 5: Launch the Servers**
+
+### **A. Run the FastAPI Backend Server**
+From your project root (with `.venv` activated), launch the backend using `uvicorn`:
+```bash
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+```
+The backend API is now running and documentable at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+### **B. Run the React Frontend Dashboard**
+1. Open a new terminal and navigate to the frontend folder:
+   ```bash
+   cd frontend
+   ```
+2. Install the web packages and start the Vite dev server:
+   ```bash
+   npm install
+   npm run dev
+   ```
+3. Open [http://localhost:5173/](http://localhost:5173/) (or `http://localhost:5174/` if 5173 is occupied) to explore your stunning Asset Intelligence dashboard!
+
+---
+
+## **Alternative: Streamlit Prototyping Client**
+If you prefer to run a single-process python dashboard instead of the full React app, you can launch the Streamlit variant:
+```bash
+streamlit run app/streamlit_app.py
+```
+
+---
+
+# 🐳 **Running with Docker Compose (Production Stack)**
+
+If you prefer to run the entire multi-container system (Neo4j Database + FastAPI Backend + React/Nginx Frontend) containerized under a single network mesh, you can use Docker Compose.
+
+### **1. Spin Up the entire application stack**
+In the root directory of your project, run:
+```bash
+docker compose up --build -d
+```
+*The `--build` flag ensures that your custom [backend/Dockerfile](backend/Dockerfile) and [frontend/Dockerfile](frontend/Dockerfile) are built into lightweight local images.*
+
+### **2. Exposed Application Interfaces**
+Once the services are running, the services map to the following ports on your localhost:
+* 🌐 **React Frontend (Served by Nginx)**: [http://localhost:5173/](http://localhost:5173/)
+* ⚙️ **FastAPI Backend (API Docs & Swagger)**: [http://localhost:8000/docs](http://localhost:8000/docs)
+* 📊 **Neo4j Graph Dashboard**: [http://localhost:7474/](http://localhost:7474/)
+
+### **3. Ingesting Data inside the Docker Container**
+Since the containerized backend runs inside the container environment, you can trigger your initial database ingestions and precomputed compatibility mappings by sending exec commands directly into the active container:
+
+```bash
+# A. Ingest Product BOMs
+docker exec -it graph-rag-backend python scripts/ingest.py --file examples/parts.yaml
+docker exec -it graph-rag-backend python scripts/ingest.py --file examples/3d-lathe.yaml
+docker exec -it graph-rag-backend python scripts/ingest.py --file examples/modulathe.yaml
+
+# B. Precompute Component Compatibility
+docker exec -it graph-rag-backend python scripts/compat.py --product "Meta Quest 3"
+docker exec -it graph-rag-backend python scripts/compat.py --product "3D-Lathe"
+docker exec -it graph-rag-backend python scripts/compat.py --product "Industrial Lathe Machine"
+
+# C. Ingest Supplementary Docs & Mappings
+docker exec -it graph-rag-backend python examples/modulathe/ingest_modulathe_docs.py
+docker exec -it graph-rag-backend python examples/modulathe/compat_modulathe.py
+```
+
+### **4. Tear Down the Stack**
+To stop all services and tear down the container stack cleanly, run:
+```bash
+docker compose down
+```

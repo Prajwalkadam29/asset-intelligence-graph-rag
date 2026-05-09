@@ -19,10 +19,10 @@ FOR (p:Part)
 REQUIRE p.part_id IS UNIQUE;
 
 // Each Spec (key,value,unit) combination must be unique.
-// NODE KEY enforces uniqueness AND existence.
+// COMMUNITY EDITION COMPATIBLE: Use IS UNIQUE instead of IS NODE KEY (which is Enterprise only).
 CREATE CONSTRAINT spec_identity IF NOT EXISTS
 FOR (s:Spec)
-REQUIRE (s.key, s.value, s.unit) IS NODE KEY;
+REQUIRE (s.key, s.value, s.unit) IS UNIQUE;
 
 
 

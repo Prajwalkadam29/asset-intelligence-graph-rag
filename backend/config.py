@@ -20,7 +20,7 @@ class Settings:
         # Groq LLM (for answer synthesis)
         self.GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
         self.GROQ_CHAT_MODEL = os.getenv(
-            "GROQ_CHAT_MODEL", "llama-3.1-70b-versatile"
+            "GROQ_CHAT_MODEL", "llama-3.3-70b-versatile"
         )
 
 

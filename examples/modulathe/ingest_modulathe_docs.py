@@ -75,9 +75,15 @@ def main():
     driver = GraphDatabase.driver(env["NEO4J_URI"],
         auth=(env["NEO4J_USER"], env["NEO4J_PASSWORD"]))
     embedder = SentenceTransformer("thenlper/gte-small")
-    for f in ["data/modulathe_v1.md", "data/modulathe_v2.md"]:
-        if os.path.exists(f): ingest(driver, embedder, f)
-        else: print(f"⚠️ missing {f}")
+    for filename in ["modulathe_v1.md", "modulathe_v2.md"]:
+        f_data = os.path.join("data", filename)
+        f_examples = os.path.join("examples", filename)
+        if os.path.exists(f_data):
+            ingest(driver, embedder, f_data)
+        elif os.path.exists(f_examples):
+            ingest(driver, embedder, f_examples)
+        else:
+            print(f"⚠️ missing {filename} in data/ and examples/")
     driver.close()
 
 if __name__ == "__main__":

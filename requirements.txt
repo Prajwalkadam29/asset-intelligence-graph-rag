@@ -7,3 +7,6 @@ numpy>=1.26.0
 groq>=0.11.0
 pypdf~=6.0.0
 streamlit~=1.49.1
+fastapi>=0.115.0
+uvicorn>=0.30.0
+python-multipart>=0.0.9

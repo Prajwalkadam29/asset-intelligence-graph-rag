@@ -1,5 +1,10 @@
 # scripts/compat.py
+import os
+import sys
 import argparse
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from backend.compatibility.scoring import compute_compatibility_for_product
 
 

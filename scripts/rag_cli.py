@@ -1,5 +1,9 @@
 # scripts/rag_cli.py
+import os
+import sys
 import argparse
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from backend.rag.retrieval import retrieve_context
 from backend.rag.synthesis import synthesize_answer

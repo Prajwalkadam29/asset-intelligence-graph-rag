@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asset-intelligence-graph-rag"
+version = "0.1.0"
+description = "Asset Intelligence Graph-RAG for Smart Manufacturing digital thread indexing, hybrid search, and multi-pillar compatibility checking."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "adwyte" },
+    { name = "Prajwalkadam29" },
+    { name = "Moral-Victory" },
+    { name = "VikramJ12" },
+    { name = "kakaderaj23" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "neo4j>=5.20.0",
+    "pyyaml>=6.0.1",
+    "tqdm>=4.66.0",
+    "python-dotenv>=1.0.0",
+    "sentence-transformers>=2.7.0",
+    "numpy>=1.26.0",
+    "groq>=0.11.0",
+    "pypdf>=6.0.0",
+    "streamlit>=1.49.1",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "python-multipart>=0.0.9",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+select = ["E", "F", "I", "W"]
+ignore = []

@@ -56,7 +56,10 @@ const App: React.FC = () => {
 
   const handleAsk = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!question.trim()) return;
+    if (!question.trim()) {
+      setError("Please enter a question first.");
+      return;
+    }
     setLoading(true);
     setError(null);
     setRagResponse(null);
@@ -73,7 +76,10 @@ const App: React.FC = () => {
 
 
   const handleLoadCompatExisting = async () => {
-    if (!currentProductName) return;
+    if (!currentProductName) {
+      setError("Please select a specific Product from the dropdown at the top first.");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -89,7 +95,14 @@ const App: React.FC = () => {
 
   const handleCheckNewPart = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentProductName || !newPartDesc.trim()) return;
+    if (!currentProductName) {
+      setError("Please select a specific Product from the dropdown at the top first.");
+      return;
+    }
+    if (!newPartDesc.trim()) {
+      setError("Please enter a description for the new part in the text area.");
+      return;
+    }
 
     setLoading(true);
     setError(null);
